@@ -1,5 +1,7 @@
 package com.katz.ecom.controller;
 
+import com.katz.ecom.model.Address;
+import com.katz.ecom.request.AddressUpdateRequest;
 import com.katz.ecom.response.Response;
 import com.katz.ecom.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,13 @@ public class User {
         // Process the request body or perform other actions
 
         return ResponseEntity.ok("Request processed successfully");
+    }
+
+    @PostMapping("/address/update")
+    public Response addAddress(@RequestBody AddressUpdateRequest request) {
+        Address address = request.getAddress();
+        Long userId = request.getUserId();
+        return this.userService.addAddress(address, userId);
     }
 
 }
