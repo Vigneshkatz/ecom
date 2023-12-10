@@ -37,11 +37,13 @@ public class User {
         return ResponseEntity.ok("Request processed successfully");
     }
 
-    @PostMapping("/address/update")
+    @PostMapping("/address/create")
     public Response addAddress(@RequestBody AddressUpdateRequest request) {
-        Address address = request.getAddress();
-        Long userId = request.getUserId();
-        return this.userService.addAddress(address, userId);
+        return this.userService.addAddress(request);
+    }
+    @PutMapping("/address/update")
+    public Response updateAddress(@RequestBody AddressUpdateRequest request) {
+        return this.userService.updateAddress(request);
     }
 
 }

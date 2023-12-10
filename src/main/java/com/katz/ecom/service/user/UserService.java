@@ -10,6 +10,7 @@ import com.katz.ecom.model.User;
 import com.katz.ecom.repository.AddressRepository;
 import com.katz.ecom.repository.OtpRepository;
 import com.katz.ecom.repository.UserRepository;
+import com.katz.ecom.request.AddressUpdateRequest;
 import com.katz.ecom.response.Response;
 import com.katz.ecom.service.email.EmailSenderService;
 import com.katz.ecom.util.UserUtil;
@@ -145,7 +146,9 @@ public class UserService {
         return response;
     }
 
-    public Response addAddress(Address address, Long userId) {
+    public Response addAddress(AddressUpdateRequest request) {
+        Address address = request.getAddress();
+        Long userId = request.getUserId();
         ErrorDTO errorDTO = new ErrorDTO();
         Response response = new Response();
         Optional<User> userOptional = Optional.empty();
@@ -163,18 +166,17 @@ public class UserService {
                 address.setIs_cod_enabled(false);
                 address.setIs_default(true);
                 address.setUser(user);
-               try {
-                   Address dbAddress = this.addressRepository.save(address);
-                   response.setContent(dbAddress);
-                   errorDTO.setErrorCode(0);
-                   errorDTO.setErrorMessage("Address added Successfully");
-                   response.setResponse(errorDTO);
-                   return response;
-               }catch (Exception e)
-               {
-                   errorDTO.setErrorCode(1);
-                   errorDTO.setErrorMessage("Address not saved");
-               }
+                try {
+                    Address dbAddress = this.addressRepository.save(address);
+                    response.setContent(dbAddress);
+                    errorDTO.setErrorCode(0);
+                    errorDTO.setErrorMessage("Address added Successfully");
+                    response.setResponse(errorDTO);
+                    return response;
+                } catch (Exception e) {
+                    errorDTO.setErrorCode(1);
+                    errorDTO.setErrorMessage("Address not saved");
+                }
             } else {
                 errorDTO.setErrorCode(1);
                 errorDTO.setErrorMessage(isValidAddress.get(false));
@@ -227,8 +229,7 @@ public class UserService {
         user.setIs_verified(true);
         try {
             this.userRepository.save(user);
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
             e.fillInStackTrace();
             throw new RuntimeException("User nto updated");
         }
@@ -252,7 +253,6 @@ public class UserService {
         this.otpRepository.save(otp);
     }
 
-
     private void setUserType(User user, UserType userType) {
         switch (userType) {
             case PRIME:
@@ -272,5 +272,47 @@ public class UserService {
                 break;
         }
     }
-
+    public Response updateAddress(AddressUpdateRequest request) {
+        ErrorDTO errorDTO = new ErrorDTO();
+        Response response = new Response();
+        Address address = request.getAddress();
+        Long userId = request.getUserId();
+        Optional<User> userOptional = Optional.empty();
+        User user = null;
+        try {
+            userOptional = this.userRepository.findById(userId);
+            user = userOptional.orElse(null);
+        }
+        catch (Exception e) {
+            errorDTO.setErrorCode(1);
+            errorDTO.setErrorMessage("System error");
+        }
+        if (userOptional.isPresent())  {
+            Optional<Address> addressOptional = this.addressRepository.findById(address.getAddress_id());
+            if (addressOptional.isPresent()) {
+                Map<Boolean, String> isValidAddress = validateAddress(address);
+                if (isValidAddress.containsKey(true)) {
+                    try {
+                        Address dbAddress = this.addressRepository.save(address);
+                        response.setContent(dbAddress);
+                        errorDTO.setErrorCode(0);
+                        errorDTO.setErrorMessage("Address added Successfully");
+                        response.setResponse(errorDTO);
+                        return response;
+                    } catch (Exception e) {
+                        errorDTO.setErrorCode(1);
+                        errorDTO.setErrorMessage("Address not saved");
+                    }
+                } else {
+                    errorDTO.setErrorCode(1);
+                    errorDTO.setErrorMessage(isValidAddress.get(false));
+                }
+            }
+        } else {
+            return this.addAddress(request);
+        }
+        response.setContent(null);
+        response.setResponse(errorDTO);
+        return response;
+    }
 }
