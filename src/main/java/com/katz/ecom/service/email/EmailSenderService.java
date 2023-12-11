@@ -1,7 +1,7 @@
 package com.katz.ecom.service.email;
 
 
-import com.katz.ecom.exception.EmailNotSentException;
+import com.katz.ecom.exception.user.EmailNotSentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.*;
 import org.springframework.mail.javamail.*;

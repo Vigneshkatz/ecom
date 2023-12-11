@@ -1,4 +1,4 @@
-package com.katz.ecom.model;
+package com.katz.ecom.model.user;
 
 
 import jakarta.persistence.*;

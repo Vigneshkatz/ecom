@@ -1,6 +1,6 @@
 package com.katz.ecom.repository;
 
-import com.katz.ecom.model.User;
+import com.katz.ecom.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
