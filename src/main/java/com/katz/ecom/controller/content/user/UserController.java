@@ -1,4 +1,4 @@
-package com.katz.ecom.controller.user;
+package com.katz.ecom.controller.content.user;
 
 import com.katz.ecom.request.AddressUpdateRequest;
 import com.katz.ecom.response.Response;
